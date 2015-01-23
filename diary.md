@@ -38,3 +38,11 @@ Decoding is very similar, except that at each stage we Gray- decode D index bits
 N-dimensional mapping. http://www.dcs.bbk.ac.uk/~jkl/pubs/JL1_00a.pdf
 
 more spatial indexing info. http://blog.notdot.net/2009/11/Damn-Cool-Algorithms-Spatial-indexing-with-Quadtrees-and-Hilbert-Curves
+
+Hilbert Curve references:
+http://www.tiac.net/~sw/2008/10/Hilbert/
+http://www.dcs.bbk.ac.uk/TriStarp/pubs/JL1_00.pdf
+http://people.csail.mit.edu/jaffer/Geometry/HSFC
+http://people.csail.mit.edu/jaffer/Geometry/RFMDSFF
+https://github.com/jbruestle/aggregate_btree/blob/master/abtree/hilbert.c
+https://github.com/jbruestle/aggregate_btree/blob/master/abtree/hilbert.h
