@@ -197,6 +197,84 @@ function rotate3d(level, x, y, z) { // :: Int -> Int -> Int -> Int -> [Int, Int,
     }
 }
 
+// returns a non-negative int 'inverse' such that graycode(inverse) = g
+exports.grey = function grayInverse (g) { // : Int -> Int
+    var m = bits(g), inverse = g, j = 1
+    while (j < m) {
+        inverse = inverse ^ (g >> j)
+        j++
+    }
+    return inverse
+}
+
+// Returns the number of bits required to store an integer
+function bits (n) { // :: Int > Int
+    var ret = 0
+    while (n > 0) {
+        ret++
+        n = n >> 1
+    }
+    return ret
+}
+
+function bitwiseRotateRight (x, n) {
+    var y = (x >> n) & ~(-1 << (32 - n))
+    var z = x << (32 - n)
+    return y | z
+}
+
+function bitwiseRotateLeft (x, n) {
+    return (x << n) | (x >> (32 - n)) & ~(-1 << n)
+}
+
+exports.gc = function grayTransform (entry, direction, x) {
+    return bitwiseRotateRight((x ^ entry), direction + 1)
+}
+
+function hilbertIndex(dim, precision, point) {
+    // dim = n
+    // precision = m
+    // p = point (5,6)
+    // vvv this transformation needs to happen
+    // entry = e
+    // direction = d <- this is n-1. Interesting its set as 0.
+    // code = w
+    // index = h
+    var index = 0, entry = 0, direction = 0, i = precision - 1, code
+
+    //
+    while (i >= 0) {
+
+        var arr = point.toArray()// transform the points to binary.
+        // l = [bit(p sub n-1 ; i), bit(p sub n 0 ; i)] [11], [10], [01]
+        var bits = 0
+
+        // what is this vvv?
+        for (var k = 0; k < arr.length; k++) {
+            if (arr[arr.length - (k+1)] & (1 << (i - 1))) {
+                // need to set kth bit, not ith
+                bits |= 1 << k
+            }
+        }
+        // ^^^ what is this ^^^?
+
+        console.log(bits.toString(2))
+        // vv look into each of these variables as well as the functions
+        // does bits go in as a string?
+        bits = grayTransform(entry, direction, bits) // transform <- 3, 2, 1
+        code = grayInverse(bits) // 2, 3, 1
+
+        // vvv new entry direction and index
+        entry = entry ^ bitwiseRotateLeft((entry * code), direction + 1)//0,3,3
+        direction = direction + (direction * code) + (1 % dim) //<- 1,0,0
+        index = (index << dim) | code // <-2, 11, 45
+
+        i--
+    }
+
+    return index // set B subscript M
+}
+
 exports.xy2d = function (x, y, height) {
     height = height || 2
     return convert2dPointToDistance(new Point(x, y), height)
@@ -209,3 +287,6 @@ exports.xyz2d = function(x, y, z, height) {
 }
 exports.d2xy = convertDistanceTo2dPoint
 exports.d2xyz = convertDistanceTo3dPoint
+exports.hilbert = function (dim, m, x, y, z) {
+    return hilbertIndex(dim, m, new Point(x, y, z))
+}
